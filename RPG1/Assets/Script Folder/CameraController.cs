@@ -19,8 +19,11 @@ public class CameraController : MonoBehaviour
 
         halfHeight = Camera.main.orthographicSize;
         halfWidth = halfHeight * Camera.main.aspect;
+        
         bottomLeftLimit = theMap.localBounds.min + new Vector3(halfWidth, halfHeight);
         topRightLimit = theMap.localBounds.max + new Vector3(-halfWidth, -halfHeight);
+
+        PlayerController.instance.SetBounds(theMap.localBounds.min, theMap.localBounds.max);
     }
 
     // Update is called once per frame
