@@ -6,11 +6,11 @@ using UnityEngine.UI;
 public class DialogManager : MonoBehaviour
 {
     public Text dialogText;
-    public Text dialogName;
+    public Text nameText;
 
     public GameObject dialogBox;
     public GameObject nameBox;
-
+    
     public string[] dialogLines;
 
     public int currentLine;
@@ -26,32 +26,54 @@ public class DialogManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (dialogBox.activeInHierarchy)
+        if (dialogBox.activeInHierarchy)//Si el dialogBox esta abierto, mostrado.
         {
             if (Input.GetButtonUp("Fire1"))//RELEASED BOTTOM
             {
-                if (!justStarted)
+                if (!justStarted)//si no es la primera vez...
                 {
-                    currentLine++;
-                    if (currentLine >= dialogLines.Length)
-                        dialogBox.SetActive(false);
+                    currentLine++;//se pasa a la siguiente linea
+                    if (currentLine >= dialogLines.Length)//si ya llego a la ultima linea..
+                    {
+                        dialogBox.SetActive(false);//se desactiva el dialogBox
+                        PlayerController.instance.canMove = true;
+                    }
                     else
-                        dialogText.text = dialogLines[currentLine];
+                    {
+                        CheckIfName();
+                        dialogText.text = dialogLines[currentLine];//se cambia el dialogText a la linea actual..
+                    }
                 }
                 else
                 {
-                    justStarted = false;
+                    justStarted = false;//justStarted = false, ya no es la primera vez.
                 }
             }
         }
     }
-    public void ShowDialog(string[] newLines)
+    public void ShowDialog(string[] newLines, bool isPerson) //the first time
     {
-        dialogLines = newLines;
+        dialogLines = newLines; //se recibe newLines en dialogLines
         currentLine = 0;
-        dialogText.text = dialogLines[0];
-        dialogBox.SetActive(true);
 
-        justStarted = true;
+        CheckIfName();
+
+        dialogText.text = dialogLines[currentLine]; //Se imprime la primer línea
+        dialogBox.SetActive(true);//Se activa el dialogBox
+
+        justStarted = true;//justStarted = true porque se acaba de iniciar por primera vez.
+
+        nameBox.SetActive(isPerson);
+        PlayerController.instance.canMove = false;
+    }
+
+    public void CheckIfName()
+    {
+        if(dialogLines[currentLine].StartsWith("n-"))
+        {
+            nameText.text = dialogLines[currentLine].Replace("n-","");
+            currentLine++;
+
+        }
     }
 }
