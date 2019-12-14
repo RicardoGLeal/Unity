@@ -36,7 +36,7 @@ public class DialogManager : MonoBehaviour
                     if (currentLine >= dialogLines.Length)//si ya llego a la ultima linea..
                     {
                         dialogBox.SetActive(false);//se desactiva el dialogBox
-                        PlayerController.instance.canMove = true;
+                        GameManager.instance.dialogActive = false;
                     }
                     else
                     {
@@ -64,7 +64,7 @@ public class DialogManager : MonoBehaviour
         justStarted = true;//justStarted = true porque se acaba de iniciar por primera vez.
 
         nameBox.SetActive(isPerson);
-        PlayerController.instance.canMove = false;
+        GameManager.instance.dialogActive = true;
     }
 
     public void CheckIfName()
