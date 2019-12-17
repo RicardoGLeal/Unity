@@ -12,6 +12,10 @@ public class GameManager : MonoBehaviour
     public bool dialogActive;
     public bool fadingBetweenAreas;
 
+    //to save the items of the player
+    public string[] itemsHeld;
+    public int[] numberOfItems;
+    public Item[] referenceItems;
     void Start()
     {
         instance = this;
@@ -29,5 +33,17 @@ public class GameManager : MonoBehaviour
         {
             PlayerController.instance.canMove = true;
         }
+    }
+
+    public Item GetItemDetails(string itemToWrap)
+    {
+        for (int i = 0; i < referenceItems.Length; i++)
+        {
+            if(referenceItems[i].itemName == itemToWrap)
+            {
+                return referenceItems[i];
+            }
+        }
+        return null;
     }
 }
