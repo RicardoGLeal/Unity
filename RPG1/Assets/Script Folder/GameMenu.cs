@@ -19,6 +19,9 @@ public class GameMenu : MonoBehaviour
     public Image statusImage;
 
     public GameObject[] statusButtons;
+    //the following variables are used in inventory
+    public ItemButton[] itemButtons;
+
 
     // Start is called before the first frame update
     void Start(){
@@ -129,6 +132,26 @@ public class GameMenu : MonoBehaviour
         statusExp.text = (playerStats[selected].expToNextLevel[playerStats[selected].playerLevel] - playerStats[selected].currentEXP).ToString();
         statusImage.sprite = playerStats[selected].charImage;
 
+    }
+
+    public void ShowItems()
+    {
+        GameManager.instance.SortItems();
+        for (int i = 0; i < itemButtons.Length; i++)
+        {
+            itemButtons[i].buttonValue = i;
+            if(GameManager.instance.itemsHeld[i] != "")
+            {
+                itemButtons[i].buttonImage.gameObject.SetActive(true);
+                itemButtons[i].buttonImage.sprite = GameManager.instance.GetItemDetails(GameManager.instance.itemsHeld[i]).itemSprite;
+                itemButtons[i].amountText.text = GameManager.instance.numberOfItems[i].ToString();
+            }
+            else
+            {
+                itemButtons[i].buttonImage.gameObject.SetActive(false);
+                itemButtons[i].amountText.text = "";
+            }
+        }
     }
 }
 
