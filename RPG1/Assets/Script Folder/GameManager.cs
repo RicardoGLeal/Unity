@@ -26,25 +26,28 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         if(gameMenuOpen || dialogActive || fadingBetweenAreas)
-        {
             PlayerController.instance.canMove = false;
-        }
         else
-        {
             PlayerController.instance.canMove = true;
+
+        if(Input.GetKeyDown(KeyCode.Y))
+        {
+            AddItem("Iron Armor");
+            RemoveItem("Health Potion");
+            RemoveItem("bleep");
         }
+
     }
 
     public Item GetItemDetails(string itemToWrap)
     {
-        for (int i = 0; i < referenceItems.Length; i++)
+        for (int i = 0; i < referenceItems.Length; i++) //se busca en la colección de items existentes...
         {
-            if(referenceItems[i].itemName == itemToWrap)
-                return referenceItems[i];
+            if(referenceItems[i].itemName == itemToWrap) 
+                return referenceItems[i]; //se retorna el item encontrado
         }
         return null;
     }
-
 
     public void SortItems()
     {
@@ -68,5 +71,69 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void AddItem(string itemToAdd)
+    {
+        int newItemPosition = 0; //guardara la posicion donde se guardara el item
+        bool foundSpace = false; // bandera para saber is ya encontro el espacio
+        for (int i = 0; i < itemsHeld.Length; i++)
+        {
+            if(itemsHeld[i] == "" || itemToAdd == itemsHeld[i] ) //si se llegó a un espacio vació, o si encontró un item igual...
+            {
+                newItemPosition = i;
+                i = itemsHeld.Length;
+                foundSpace = true;
+            }
+        }
+        if(foundSpace)
+        {
+            bool itemExists = false;
+            for (int i = 0; i < referenceItems.Length; i++)
+            {
+                if(referenceItems[i].itemName == itemToAdd) //si se encontró el item en la lista de items de referencia..
+                {
+                    itemExists = true; //item encontrado (existe)
+                    break;
+                }
+            }
+            //jack reacher sin regreso
+            if(itemExists)
+            {
+                itemsHeld[newItemPosition] = itemToAdd; 
+                numberOfItems[newItemPosition]++;
+            }
+            else
+            {
+                Debug.LogError(itemToAdd + "does not exists!");
+            }
+        }
+        GameMenu.instance.ShowItems();
+    }
+    public void RemoveItem(string itemToRemove)
+    {
+        bool foundItem = false;
+        int itemPosition = 0;
+        for (int i = 0; i < itemsHeld.Length; i++)
+        {
+            if(itemToRemove == itemsHeld[i])
+            {
+                foundItem = true;
+                itemPosition = i;
+                break;
+            }
+        }
+
+        if (foundItem)
+        {
+            numberOfItems[itemPosition]--;
+            if(numberOfItems[itemPosition] <=0)
+            {
+                itemsHeld[itemPosition] = "";
+            }
+            GameMenu.instance.ShowItems();
+        }
+        else
+            Debug.LogError("Could not find the item");
     }
 }

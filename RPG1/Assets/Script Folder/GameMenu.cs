@@ -23,25 +23,31 @@ public class GameMenu : MonoBehaviour
     public ItemButton[] itemButtons;
 
 
+    public string selectedItem;
+    public Item activeItem;
+    public Text itemName, itemDescription, useButtonText;
+
+
+    public static GameMenu instance;
     // Start is called before the first frame update
-    void Start(){
-        
+    void Start()
+    {
+        instance = this;
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetButtonDown("Fire2"))
+        if(Input.GetButtonDown("Fire2")) //Click derecho del mouse
         {
-        if(theMenu.activeInHierarchy)
-            {
-                CloseMenu();
-            }
+        if(theMenu.activeInHierarchy) //Si el menú está abierto..
+                CloseMenu(); //Se cierra
         else
             {
-                theMenu.SetActive(true);
-                UpdateMainStats();
-                GameManager.instance.gameMenuOpen = true;
+                theMenu.SetActive(true);//Se abre el menú
+                UpdateMainStats();//Se actualizan las estadísticas
+                GameManager.instance.gameMenuOpen = true; //En el GameManager se establece que el menú ya está abierto
             }
         }
         
@@ -75,29 +81,24 @@ public class GameMenu : MonoBehaviour
         }
     }
 
-    public void ToogleWindow(int windowNumber)
+    public void ToogleWindow(int windowNumber)//para abrir la ventana correspondiente del menú. 
     {
         UpdateMainStats();
         for (int i = 0; i < windows.Length; i++)
         {
             if (i == windowNumber)
-            {
-                windows[i].SetActive(!windows[i].activeInHierarchy);
-            }
+                windows[i].SetActive(!windows[i].activeInHierarchy);//activa la ventana correspondiente
             else
-                windows[i].SetActive(false);
+                windows[i].SetActive(false);//se van desactivando las que no son
         }
     }
 
     public void CloseMenu()
     {
         for (int i = 0; i < windows.Length; i++)
-        {
-            windows[i].SetActive(false);
-
-        }
-        theMenu.SetActive(false);
-        GameManager.instance.gameMenuOpen = false;
+            windows[i].SetActive(false);//se desactivan todas las ventanas
+        theMenu.SetActive(false);//se desactiva el menu
+        GameManager.instance.gameMenuOpen = false;//en el gameManager se establece que el menu no está abierto.
     }
 
     public void OpenStatus()
@@ -136,21 +137,41 @@ public class GameMenu : MonoBehaviour
 
     public void ShowItems()
     {
-        GameManager.instance.SortItems();
+        GameManager.instance.SortItems(); //se acomodan todos los items para no dejar espacios vacios
         for (int i = 0; i < itemButtons.Length; i++)
         {
-            itemButtons[i].buttonValue = i;
-            if(GameManager.instance.itemsHeld[i] != "")
+            itemButtons[i].buttonValue = i; 
+            if(GameManager.instance.itemsHeld[i] != "") //si hay un item
             {
-                itemButtons[i].buttonImage.gameObject.SetActive(true);
-                itemButtons[i].buttonImage.sprite = GameManager.instance.GetItemDetails(GameManager.instance.itemsHeld[i]).itemSprite;
-                itemButtons[i].amountText.text = GameManager.instance.numberOfItems[i].ToString();
+                itemButtons[i].buttonImage.gameObject.SetActive(true); //se deja visible
+                itemButtons[i].buttonImage.sprite = GameManager.instance.GetItemDetails(GameManager.instance.itemsHeld[i]).itemSprite; //se le coloca el sprite
+                itemButtons[i].amountText.text = GameManager.instance.numberOfItems[i].ToString();//se le asigna la cantidad
             }
             else
             {
-                itemButtons[i].buttonImage.gameObject.SetActive(false);
-                itemButtons[i].amountText.text = "";
+                itemButtons[i].buttonImage.gameObject.SetActive(false); //se desactiva el boton
+                itemButtons[i].amountText.text = ""; //se pone null la cantidad
             }
+        }
+    }
+
+    public void SelectItem(Item newItem)
+    {
+        activeItem = newItem; 
+        if (activeItem.isItem) //si es un item
+            useButtonText.text = "Use";
+        else
+            if (activeItem.isWeapon || activeItem.isArmour)//si es armor o weapon..
+            useButtonText.text = "Equip";
+        itemName.text = activeItem.itemName;
+        itemDescription.text = activeItem.description;
+    }
+
+    public void DiscardItem()
+    {
+        if(activeItem!=null)
+        {
+            GameManager.instance.RemoveItem(activeItem.itemName);
         }
     }
 }
