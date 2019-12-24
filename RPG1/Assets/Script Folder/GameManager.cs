@@ -13,28 +13,29 @@ public class GameManager : MonoBehaviour
     public bool fadingBetweenAreas;
 
     //to save the items of the player
-    public string[] itemsHeld;
+    public string[] itemsHeld; //this string array saves all the items that the user has in his inventory.
     public int[] numberOfItems;
-    public Item[] referenceItems;
+    public Item[] referenceItems;//array of all the items that exists in the game.
     void Start()
     {
         instance = this;
         DontDestroyOnLoad(gameObject);
+        SortItems();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(gameMenuOpen || dialogActive || fadingBetweenAreas)
-            PlayerController.instance.canMove = false;
+        if(gameMenuOpen || dialogActive || fadingBetweenAreas) //si el menu esta abierto || hay un diálogo npc activo || transicion
+            PlayerController.instance.canMove = false; //no te puedes mover
         else
-            PlayerController.instance.canMove = true;
+            PlayerController.instance.canMove = true;//the player can move
 
-        if(Input.GetKeyDown(KeyCode.Y))
+        if(Input.GetKeyDown(KeyCode.Y))//al presionar y
         {
             AddItem("Iron Armor");
             RemoveItem("Health Potion");
-            RemoveItem("bleep");
+            //RemoveItem("bleep");
         }
 
     }
